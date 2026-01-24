@@ -6,7 +6,22 @@
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 ![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google%20bard&logoColor=white)
 
-> **A Next-Generation API Security Platform.** > Combines the speed of **Redis** caching with the intelligence of **Google Gemini 2.0** to detect and block semantic cyberattacks (SQLi, XSS, Command Injection) in real-time.
+> **A Next-Generation API Security Platform.**
+> Combines the speed of **Redis** caching with the intelligence of **Google Gemini 2.0** to detect and block semantic cyberattacks (SQLi, XSS, Command Injection) in real-time.
+
+---
+
+## 🏗️ Architecture
+
+![System Architecture](assets/architecture.png)
+
+| Component | Tech Stack | Role |
+| :--- | :--- | :--- |
+| **Backend API** | FastAPI (Python) | Intercepts traffic, manages rate limits, calls AI. |
+| **Brain** | Google Gemini 2.0 Flash Lite| Analyzes payloads for malicious intent. |
+| **Memory** | Redis (Upstash) | Caches verdicts, stores rate limits, tracks bans. |
+| **Dashboard** | Streamlit | Real-time monitoring, Maps, and Ban Management. |
+| **Infrastructure** | Docker Compose | Orchestrates the entire stack. |
 
 ---
 
@@ -28,47 +43,12 @@ Traditional firewalls rely on static "Regular Expressions" (Regex) which are eas
 
 ---
 
-## 🏗️ Architecture
-
-graph TD
-    User[User / Attacker] -->|POST /login| Firewall[🛡️ FastAPI Firewall]
-    
-    subgraph "Hybrid Security Engine"
-        Firewall -->|1. Check Cache| Redis[(Redis Memory)]
-        Redis -- "Known Threat?" --> Decision{Verdict}
-        
-        Decision -- "Yes (Hit)" --> Block[⛔ Block Instantly]
-        Decision -- "No (Miss)" --> AI[🤖 Google Gemini 2.0]
-        
-        AI -->|2. Analyze Intent| AI_Verdict{Is Malicious?}
-        AI_Verdict -- "Yes" --> UpdateCache[3. Cache Signature]
-        AI_Verdict -- "No" --> Pass[✅ Allow Traffic]
-        
-        UpdateCache --> Block
-    end
-    
-    subgraph "Observability"
-        Block -.->|Log| Dashboard[📊 Streamlit Dashboard]
-        Pass -.->|Log| Dashboard
-        Dashboard -->|Read| Redis
-    end
-
-| Component | Tech Stack | Role |
-| :--- | :--- | :--- |
-| **Backend API** | FastAPI (Python) | Intercepts traffic, manages rate limits, calls AI. |
-| **Brain** | Google Gemini 2.0 Flash | Analyzes payloads for malicious intent. |
-| **Memory** | Redis (Upstash) | Caches verdicts, stores rate limits, tracks bans. |
-| **Dashboard** | Streamlit | Real-time monitoring, Maps, and Ban Management. |
-| **Infrastructure** | Docker Compose | Orchestrates the entire stack. |
-
----
-
 ## 🐳 Quick Start (Docker)
 *Prerequisite: Docker Desktop installed.*
 
 1.  **Clone the Repository**
     ```bash
-    git clone [https://github.com/your-username/smart-api-firewall.git](https://github.com/your-username/smart-api-firewall.git)
+    git clone [https://github.com/aswindas-c/smart-api-firewall.git](https://github.com/aswindas-c/smart-api-firewall.git)
     cd smart-api-firewall
     ```
 
@@ -103,14 +83,18 @@ The Dashboard (Port 8501) is divided into two tabs:
 Use this interface to act like a hacker and test the firewall.
 * **Safe Request:** Enter `alice` -> Result: `✅ ACCESS GRANTED`
 * **SQL Injection:** Enter `' OR '1'='1` -> Result: `🛡️ BLOCKED BY FIREWALL`
-* **XSS Attack:** Enter `<script>alert(1)</script>` -> Result: `🛡️ BLOCKED BY FIREWALL`
+
+![Attack Simulator Demo](assets/attack_demo.png)
 
 ### Tab 2: 📊 Admin Dashboard
-Monitor the defense system in action.
-* **Live Map:** See where requests are coming from (Simulated for Docker traffic).
-* **Audit Logs:** View a table of recent traffic with Risk Scores.
-* **Ban Manager:** View currently banned IPs. Select an IP and click **"Unlock IP"** to restore access.
-* **Download:** Export logs to CSV for reporting.
+Monitor the defense system in action, including logs and active bans.
+
+![Admin Dashboard](assets/dashboard.png)
+
+### 🌍 Live Threat Map
+Visualizes attacker locations in real-time.
+
+![Live Threat Map](assets/threat_map.png)
 
 ---
 
@@ -133,7 +117,7 @@ Monitor the defense system in action.
 ---
 
 ## 👨‍💻 Author
-**AswinDas**
+**Aswin Das**
 * [LinkedIn](https://linkedin.com/in/aswindas-c)
 * [GitHub](https://github.com/aswindas-c)
 
