@@ -1,0 +1,14 @@
+# Ignore the virtual environment (Massive & Unnecessary)
+venv/
+.venv/
+
+# Ignore git history (Huge)
+.git/
+
+# Ignore compiled python files
+__pycache__/
+*.pyc
+
+# Ignore environment variables (Security Best Practice)
+# Docker Compose will inject these variables safely at runtime
+.env

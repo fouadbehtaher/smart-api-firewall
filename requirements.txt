@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+redis
+google-genai
+streamlit
+python-dotenv
+requests
+watchdog
+plotly

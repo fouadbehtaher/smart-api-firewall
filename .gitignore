@@ -1,0 +1,16 @@
+# Security: NEVER upload secrets
+.env
+.env.local
+
+# Python junk
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+
+# OS junk
+.DS_Store
+
+# Docker junk
+.docker/

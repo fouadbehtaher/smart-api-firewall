@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Service 1: The FastAPI Backend
+  backend:
+    build: .
+    container_name: security-backend
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    # Restart automatically if it crashes
+    restart: always
+
+  # Service 2: The Streamlit Dashboard
+# ... inside docker-compose.yml ...
+
+  dashboard:
+    build: .
+    container_name: security-dashboard
+    command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    # ADD THIS SECTION:
+    environment:
+      - IS_DOCKER=true
+    depends_on:
+      - backend
+    restart: always
