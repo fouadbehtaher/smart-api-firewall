@@ -12,11 +12,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# DYNAMIC URL: Works locally (localhost) AND inside Docker (backend container)
-if os.getenv("IS_DOCKER"):
-    API_URL = "http://backend:8000"
-else:
-    API_URL = "http://localhost:8000"
+# Use the environment variable if available (Cloud), otherwise default to localhost (Local)
+API_URL = os.getenv("API_URL", "http://backend:8000")
 
 st.title("🛡️ AI-Enhanced API Firewall")
 st.markdown("### Hybrid Security Engine: Local Signatures + Gemini 2.0 AI")
@@ -156,7 +153,13 @@ with tab2:
             
             if logs:
                 df = pd.DataFrame(logs)
-                
+                if 'timestamp' in df.columns:
+                    # Convert string timestamp to real datetime
+                    df['timestamp'] = pd.to_datetime(df['timestamp'])
+                    # Sort Descending (Newest at top)
+                    df = df.sort_values(by='timestamp', ascending=False)
+                    # Reset index so row numbers start at 0 again
+                    df = df.reset_index(drop=True)
                 # KPIS
                 kpi1, kpi2, kpi3 = st.columns(3)
                 total_reqs = len(df)
@@ -201,7 +204,7 @@ with tab2:
                     st.info("No geospatial data available yet.")
 
                 st.subheader("Recent Audit Logs")
-                st.dataframe(df.sort_index(ascending=False).head(50), use_container_width=True)
+                st.dataframe(df.head(50), use_container_width=True)
 
                 # CSV Download Button
                 csv_data = df.to_csv(index=False).encode('utf-8')
