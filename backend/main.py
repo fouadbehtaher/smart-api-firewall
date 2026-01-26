@@ -1,4 +1,3 @@
-import time
 import redis
 import requests
 import json
