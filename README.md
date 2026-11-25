@@ -98,6 +98,12 @@ Visualizes attacker locations in real-time.
 
 ---
 
+## Local signature pre-filter (added in the fork)
+
+`backend/signatures.py` checks request bodies for classic SQL injection, XSS, command injection and path traversal patterns (URL-decoded and JSON-unescaped, with bounded work) before the AI is called. A hit is blocked right away, with no model call. This matters because the AI check answers "SAFE" when the Gemini key is missing, the quota is hit or the call fails.
+
+It is a short pattern list, not a full rule set. Anything it does not match still depends on the AI verdict. Run the tests with `pip install pytest && pytest`.
+
 ## 🔌 API Endpoints
 
 | Method | Endpoint | Description |
