@@ -4,6 +4,8 @@ import redis
 from google import genai
 from dotenv import load_dotenv
 
+from backend.signatures import detect_signature
+
 load_dotenv()
 
 # --- CONFIGURATION ---
@@ -30,6 +32,11 @@ KNOWN_THREATS = {"SQL_INJECTION", "XSS_ATTACK", "COMMAND_INJECTION", "MALWARE", 
 def analyze_risk_with_ai(payload: str) -> str:
     if not payload:
         return "SAFE"
+
+    # 0. LOCAL SIGNATURES FIRST: no API call, no cache, cannot be talked out of it
+    local_verdict = detect_signature(payload)
+    if local_verdict:
+        return local_verdict
 
     # 1. GENERATE FINGERPRINT (Hash)
     payload_hash = hashlib.sha256(payload.encode()).hexdigest()
